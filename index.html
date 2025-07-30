@@ -5,56 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Performance | Imobiliária</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
-    <!-- Font Awesome (Ícones) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Estilo customizado com as cores da marca -->
     <style>
         :root {
             --cor-fundo: #121212;
             --cor-texto: #ffffff;
-            --cor-primaria: #2ECC71; /* Verde esmeralda, mais profissional */
+            --cor-primaria: #2ECC71;
             --cor-card: #1e1e1e;
             --cor-borda: #333333;
         }
-
         body {
             background-color: var(--cor-fundo);
             color: var(--cor-texto);
             font-family: 'Inter', sans-serif;
         }
-
         .navbar-dark {
             background-color: var(--cor-card);
             border-bottom: 1px solid var(--cor-borda);
         }
-
         .navbar-brand {
             font-weight: 700;
             color: var(--cor-primaria) !important;
         }
-
         .card {
             background-color: var(--cor-card);
             border: 1px solid var(--cor-borda);
             border-radius: 12px;
             margin-bottom: 1.5rem;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-
         .card-header {
             background-color: transparent;
             border-bottom: 1px solid var(--cor-borda);
@@ -62,37 +47,38 @@
             font-size: 1.1rem;
             color: var(--cor-texto);
         }
-        
-        .kpi-card .card-body {
-            text-align: center;
-        }
-
+        .kpi-card .card-body { text-align: center; }
         .kpi-value {
             font-size: 2.8rem;
             font-weight: 700;
             color: var(--cor-primaria);
+            min-height: 54px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
         .kpi-label {
             font-size: 0.9rem;
             color: #a0a0a0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        .last-update {
-            font-size: 0.8rem;
-            color: #888;
+        #ranking-corretores .list-group-item {
+            background-color: transparent;
+            color: var(--cor-texto);
+            border-color: var(--cor-borda);
         }
-
-        .loading-spinner {
+        .last-update { font-size: 0.8rem; color: #888; }
+        .loading-spinner { color: var(--cor-primaria); }
+        canvas { background-color: var(--cor-card); border-radius: 8px; }
+        .btn-check:checked+.btn-outline-primary, .btn-outline-primary:hover {
+            color: #000 !important;
+            background-color: var(--cor-primaria) !important;
+            border-color: var(--cor-primaria) !important;
+        }
+        .btn-outline-primary {
             color: var(--cor-primaria);
-        }
-
-        /* Estilo para os gráficos */
-        canvas {
-            background-color: var(--cor-card);
-            border-radius: 8px;
+            border-color: var(--cor-primaria);
         }
     </style>
 </head>
@@ -100,282 +86,234 @@
 
     <nav class="navbar navbar-dark sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fa-solid fa-chart-pie"></i>
-               Dashboard T3 
-            </a>
-            <span class="navbar-text last-update">
-                Carregando dados...
-            </span>
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard T3</a>
+            <span class="navbar-text last-update">Carregando dados...</span>
         </div>
     </nav>
 
     <main class="container-fluid mt-4">
-        <!-- SEÇÃO DE KPIs ESSENCIAIS -->
-        <section class="row">
-            <div class="col-lg-3 col-md-6">
-                <div class="card kpi-card">
-                    <div class="card-body">
-                        <div id="kpi-total-agendamentos" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div>
-                        <div class="kpi-label">Total de Agendamentos</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card kpi-card">
-                    <div class="card-body">
-                        <div id="kpi-agendamentos-realizados" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div>
-                        <div class="kpi-label">Agendamentos Realizados</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="card kpi-card">
-                    <div class="card-body">
-                        <div id="kpi-taxa-sucesso" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div>
-                        <div class="kpi-label">Taxa de Sucesso</div>
-                    </div>
-                </div>
-            </div>
-             <div class="col-lg-3 col-md-6">
-                <div class="card kpi-card">
-                    <div class="card-body">
-                        <div id="kpi-equipe-destaque" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div>
-                        <div class="kpi-label">Equipe Destaque</div>
-                    </div>
-                </div>
+
+        <section class="d-flex justify-content-end mb-3">
+            <div id="filtro-dia" class="btn-group" role="group" aria-label="Filtro de Dia da Semana">
+                <input type="radio" class="btn-check" name="btnradio" id="btn-todos" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="btn-todos">Todos</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="btn-semana" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btn-semana">Semana</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="btn-sabado" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btn-sabado">Sábado</label>
             </div>
         </section>
 
-        <!-- SEÇÃO DE GRÁFICOS -->
         <section class="row">
-            <!-- Gráfico de Agendamentos por Equipe -->
-            <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-header">Desempenho por Equipe</div>
-                    <div class="card-body">
-                        <canvas id="graficoEquipes"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gráfico de Tipos de Agendamento -->
-            <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">Tipos de Agendamento (Realizados)</div>
-                    <div class="card-body">
-                        <canvas id="graficoTipos"></canvas>
-                    </div>
-                </div>
-            </div>
+            <div class="col-lg col-md-6"><div class="card kpi-card"><div class="card-body"><div id="kpi-total-agendamentos" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div><div class="kpi-label">Total de Agendamentos</div></div></div></div>
+            <div class="col-lg col-md-6"><div class="card kpi-card"><div class="card-body"><div id="kpi-agendamentos-realizados" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div><div class="kpi-label">Agendamentos Realizados</div></div></div></div>
+            <div class="col-lg col-md-6"><div class="card kpi-card"><div class="card-body"><div id="kpi-taxa-sucesso" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div><div class="kpi-label">Taxa de Sucesso</div></div></div></div>
+            <div class="col-lg col-md-6"><div class="card kpi-card"><div class="card-body"><div id="kpi-equipe-destaque" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div><div class="kpi-label">Equipe Destaque</div></div></div></div>
+            <div class="col-lg col-md-6"><div class="card kpi-card"><div class="card-body"><div id="kpi-corretor-destaque" class="kpi-value"><div class="spinner-border loading-spinner" role="status"></div></div><div class="kpi-label">Corretor Destaque</div></div></div></div>
         </section>
-        
-         <footer class="text-center text-muted py-4">
-            Dashboard desenvolvido para o dia a dia da imobiliária.
-        </footer>
+
+        <section class="row">
+            <div class="col-lg-8"><div class="card"><div class="card-header">Desempenho por Equipe</div><div class="card-body" style="height: 350px;"><canvas id="graficoEquipes"></canvas></div></div></div>
+            <div class="col-lg-4"><div class="card h-100"><div class="card-header"><i class="fa-solid fa-trophy" style="color: #FFD700;"></i> Top 5 Corretores</div><div class="card-body p-2"><ul id="ranking-corretores" class="list-group list-group-flush"></ul></div></div></div>
+        </section>
+
+        <section class="row">
+            <div class="col-lg-6"><div class="card"><div class="card-header">Tipos de Agendamento (Realizados)</div><div class="card-body" style="height: 350px;"><canvas id="graficoTipos"></canvas></div></div></div>
+            <div class="col-lg-6"><div class="card"><div class="card-header">Agendamentos: Sábado vs. Semana</div><div class="card-body" style="height: 350px;"><canvas id="graficoDiaSemana"></canvas></div></div></div>
+        </section>
+
+        <footer class="text-center text-muted py-4">Dashboard desenvolvido para o dia a dia da imobiliária.</footer>
     </main>
 
-    <!-- Chart.js (Gráficos) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- PapaParse (Para ler o CSV do Google Sheets) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <script>
-
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTiFEUzgNtnuVpX2j4w22_VKpUOZ-gXNrDEASF-UYgox3b1gyhw-MB_d_SLf4qJj8A_PwdnowNpOkbo/pub?output=csv';
 
-        // Variáveis para armazenar as instâncias dos gráficos e evitar duplicação
-        let graficoEquipesInstance = null;
-        let graficoTiposInstance = null;
+        let allData = [];
+        let instances = {}; 
 
-        /**
-         * Função principal que busca os dados da planilha e inicia o processo de renderização.
-         */
+        function getDayType(dateString) {
+            if (!dateString || typeof dateString !== 'string' || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) return null;
+            const parts = dateString.split('/');
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const year = parseInt(parts[2], 10);
+            const date = new Date(year, month, day);
+            if (isNaN(date.getTime()) || date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) return null;
+            const dayOfWeek = date.getDay();
+            return dayOfWeek === 6 ? 'sabado' : 'semana';
+        }
+
         async function fetchDataAndRender() {
-            // Mostra feedback de carregamento
-            document.querySelector('.last-update').textContent = 'Atualizando...';
-
-            Papa.parse(GOOGLE_SHEET_URL, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    processData(results.data);
-                    // Atualiza a hora da última busca bem-sucedida
-                    document.querySelector('.last-update').textContent = `Atualizado às: ${new Date().toLocaleTimeString()}`;
-                },
-                error: function(error) {
-                    console.error('Erro ao buscar ou processar dados da planilha:', error);
-                    // Use um modal ou uma notificação mais amigável em vez de alert
-                    document.getElementById('kpi-total-agendamentos').innerHTML = `<span style="font-size: 1rem; color: #E74C3C;">Erro</span>`;
-                    document.getElementById('kpi-agendamentos-realizados').innerHTML = `<span style="font-size: 1rem; color: #E74C3C;">Erro</span>`;
-                    document.getElementById('kpi-taxa-sucesso').innerHTML = `<span style="font-size: 1rem; color: #E74C3C;">Erro</span>`;
-                    document.getElementById('kpi-equipe-destaque').innerHTML = `<span style="font-size: 1rem; color: #E74C3C;">Erro</span>`;
-                    document.querySelector('.last-update').textContent = 'Falha ao carregar dados.';
+            try {
+                document.querySelector('.last-update').textContent = 'Atualizando...';
+                Papa.parse(GOOGLE_SHEET_URL, {
+                    download: true, header: true, skipEmptyLines: true,
+                    complete: function(results) {
+                        allData = results.data;
+                        if (!allData || allData.length === 0) {
+                            console.error("Nenhum dado válido foi carregado da planilha.");
+                            return;
+                        }
+                        
+                        const dateKey = Object.keys(allData[0])[0];
+                        allData.forEach(row => { row.dayType = getDayType(row[dateKey]); });
+                        
+                        renderStaticCharts(allData);
+                        updateDashboard('todos');
+                        
+                        document.querySelector('.last-update').textContent = `Atualizado em: ${new Date().toLocaleTimeString()}`;
+                    },
+                    error: function(error) { 
+                        console.error("Erro ao buscar ou processar dados da planilha:", error);
+                        document.querySelector('.last-update').textContent = 'Falha ao carregar.';
+                    }
+                });
+            } catch (error) {
+                console.error("Erro geral na função fetchDataAndRender:", error);
+            }
+        }
+        
+        function setupFilters() {
+            document.getElementById('filtro-dia').addEventListener('change', (event) => {
+                if (event.target.name === 'btnradio') {
+                    const selectedFilter = event.target.id.replace('btn-', '');
+                    updateDashboard(selectedFilter);
                 }
             });
         }
 
-        /**
-         * Processa os dados recebidos do CSV e calcula os KPIs e dados para os gráficos.
-         * @param {Array<Object>} data - Os dados da planilha em formato de array de objetos.
-         */
-        function processData(data) {
-            // --- Cálculos para os KPIs ---
+        function updateDashboard(filter) {
+            const filteredData = (filter === 'todos')
+                ? allData 
+                : allData.filter(row => row.dayType === filter);
+
+            processAndRenderKPIs(filteredData);
+            processAndRenderChartsAndRanking(filteredData);
+        }
+        
+        function processAndRenderKPIs(data) {
             const totalAgendamentos = data.length;
-            const agendamentosRealizados = data.filter(row => row.Status && row.Status.trim() === 'Realizado').length;
+            const agendamentosRealizados = data.filter(row => row.Status && typeof row.Status === 'string' && row.Status.trim() === 'Realizado').length;
             const taxaSucesso = totalAgendamentos > 0 ? ((agendamentosRealizados / totalAgendamentos) * 100).toFixed(1) + '%' : '0%';
             
-            const agendamentosPorEquipeRealizados = data
-                .filter(row => row.Status && row.Status.trim() === 'Realizado')
-                .reduce((acc, row) => {
-                    if (row.Equipe) {
-                        const equipe = row.Equipe.trim();
-                        acc[equipe] = (acc[equipe] || 0) + 1;
-                    }
-                    return acc;
-                }, {});
-
-            let equipeDestaque = 'N/A';
-            let maxAgendamentos = 0;
-            for (const equipe in agendamentosPorEquipeRealizados) {
-                if (agendamentosPorEquipeRealizados[equipe] > maxAgendamentos) {
-                    maxAgendamentos = agendamentosPorEquipeRealizados[equipe];
-                    equipeDestaque = equipe;
-                }
-            }
-            
-            // --- Atualiza os cards de KPI na tela ---
             document.getElementById('kpi-total-agendamentos').textContent = totalAgendamentos;
             document.getElementById('kpi-agendamentos-realizados').textContent = agendamentosRealizados;
             document.getElementById('kpi-taxa-sucesso').textContent = taxaSucesso;
-            document.getElementById('kpi-equipe-destaque').textContent = equipeDestaque;
-
-            // --- Agregação de dados para os Gráficos ---
-            const totalAgendamentosPorEquipe = data.reduce((acc, row) => {
-                 if (row.Equipe) {
-                    const equipe = row.Equipe.trim();
-                    acc[equipe] = (acc[equipe] || 0) + 1;
-                 }
-                return acc;
-            }, {});
-
-            const tiposDeAgendamentoRealizados = data
-                .filter(row => row.Status && row.Status.trim() === 'Realizado')
-                .reduce((acc, row) => {
-                    if (row.TipoAgendamento) {
-                        const tipo = row.TipoAgendamento.trim();
-                        acc[tipo] = (acc[tipo] || 0) + 1;
-                    }
-                    return acc;
-                }, {});
-
-            // --- Renderização dos Gráficos ---
-            renderGraficoEquipes(totalAgendamentosPorEquipe);
-            renderGraficoTipos(tiposDeAgendamentoRealizados);
         }
 
-        /**
-         * Renderiza o gráfico de barras de desempenho por equipe.
-         * @param {Object} data - Objeto com equipes como chaves e contagem como valores.
-         */
-        function renderGraficoEquipes(data) {
-            const ctx = document.getElementById('graficoEquipes').getContext('2d');
-            const labels = Object.keys(data);
-            const values = Object.values(data);
+        function processAndRenderChartsAndRanking(data) {
+            try {
+                const corretorKey = allData.length > 0 ? Object.keys(allData[0]).find(key => key.trim().toLowerCase() === 'corretores') : null;
 
-            if (graficoEquipesInstance) {
-                graficoEquipesInstance.destroy();
-            }
+                if (data.length === 0) {
+                    document.getElementById('kpi-equipe-destaque').textContent = 'N/A';
+                    document.getElementById('kpi-corretor-destaque').textContent = 'N/A';
+                    renderChart('equipes', 'graficoEquipes', 'bar', { labels: [], datasets: [] }, false);
+                    renderChart('tipos', 'graficoTipos', 'doughnut', { labels: [], datasets: [] });
+                    renderRankingCorretores([], !!corretorKey);
+                    return;
+                }
 
-            graficoEquipesInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total de Agendamentos',
-                        data: values,
+                const safeReduce = (key) => (acc, row) => {
+                    const value = row[key];
+                    if (value && typeof value === 'string') {
+                        const trimmedValue = value.trim();
+                        if (trimmedValue) acc[trimmedValue] = (acc[trimmedValue] || 0) + 1;
+                    }
+                    return acc;
+                };
+
+                const agendamentosPorEquipe = data.reduce(safeReduce('Equipe'), {});
+                const agendamentosPorEquipeRealizados = data.filter(r => r.Status?.trim() === 'Realizado').reduce(safeReduce('Equipe'), {});
+                const agendamentosPorCorretor = corretorKey ? data.reduce(safeReduce(corretorKey), {}) : {};
+                const tiposDeAgendamentoRealizados = data.filter(r => r.Status?.trim() === 'Realizado').reduce(safeReduce('TipoAgendamento'), {});
+                
+                const equipeDestaque = Object.keys(agendamentosPorEquipeRealizados).reduce((a, b) => agendamentosPorEquipeRealizados[a] > agendamentosPorEquipeRealizados[b] ? a : b, 'N/A');
+                const corretorDestaque = Object.keys(agendamentosPorCorretor).reduce((a, b) => agendamentosPorCorretor[a] > agendamentosPorCorretor[b] ? a : b, 'N/A');
+
+                document.getElementById('kpi-equipe-destaque').textContent = equipeDestaque;
+                document.getElementById('kpi-corretor-destaque').innerHTML = corretorKey ? corretorDestaque : '<span class="kpi-value-error">Erro</span>';
+
+                const rankingCorretores = Object.entries(agendamentosPorCorretor).map(([nome, total]) => ({ nome, total })).sort((a, b) => b.total - a.total).slice(0, 5);
+                
+                renderChart('equipes', 'graficoEquipes', 'bar', { 
+                    labels: Object.keys(agendamentosPorEquipe), 
+                    datasets: [{ 
+                        label: 'Total de Agendamentos', 
+                        data: Object.values(agendamentosPorEquipe), 
                         backgroundColor: 'rgba(46, 204, 113, 0.6)',
                         borderColor: 'rgba(46, 204, 113, 1)',
                         borderWidth: 1,
                         borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#ccc', font: { family: 'Inter' } },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                        },
-                        x: {
-                            ticks: { color: '#ccc', font: { family: 'Inter' } },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-        
-        /**
-         * Renderiza o gráfico de rosca com os tipos de agendamento.
-         * @param {Object} data - Objeto com tipos de agendamento como chaves e contagem como valores.
-         */
-        function renderGraficoTipos(data) {
-            const ctx = document.getElementById('graficoTipos').getContext('2d');
-            const labels = Object.keys(data);
-            const values = Object.values(data);
-
-            if (graficoTiposInstance) {
-                graficoTiposInstance.destroy();
+                    }] 
+                }, false);
+                renderChart('tipos', 'graficoTipos', 'doughnut', { labels: Object.keys(tiposDeAgendamentoRealizados), datasets: [{ data: Object.values(tiposDeAgendamentoRealizados), backgroundColor: ['#2ECC71', '#FFFFFF', '#27AE60', '#A9DFBF', '#1ABC9C'], borderColor: 'var(--cor-card)', borderWidth: 4 }] });
+                renderRankingCorretores(rankingCorretores, !!corretorKey);
+            } catch (error) {
+                console.error("Erro ao processar e renderizar gráficos:", error);
             }
-
-            graficoTiposInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: [
-                            '#2ECC71', '#FFFFFF', '#27AE60', '#A9DFBF', '#1ABC9C', '#16A085'
-                        ],
-                        borderColor: 'var(--cor-card)',
-                        borderWidth: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'bottom',
-                            labels: { color: '#ccc', font: { family: 'Inter' }, boxWidth: 15 }
-                        }
-                    }
-                }
+        }
+        
+        function renderStaticCharts(data) {
+            const counts = data.reduce((acc, row) => {
+                if (row.dayType === 'sabado') acc.sabado++;
+                else if (row.dayType === 'semana') acc.semana++;
+                return acc;
+            }, { semana: 0, sabado: 0 });
+            
+            renderChart('diaSemana', 'graficoDiaSemana', 'doughnut', {
+                labels: ['Durante a Semana', 'Sábados'],
+                datasets: [{ data: [counts.semana, counts.sabado], backgroundColor: ['#2ECC71', '#FFFFFF'], borderColor: 'var(--cor-card)', borderWidth: 4 }]
             });
         }
         
-        // --- INICIALIZAÇÃO E ATUALIZAÇÃO AUTOMÁTICA ---
+        function renderChart(instanceKey, canvasId, type, data, legendDisplay = true) {
+            try {
+                const ctx = document.getElementById(canvasId)?.getContext('2d');
+                if (!ctx) {
+                    console.error(`Canvas com id "${canvasId}" não foi encontrado.`);
+                    return;
+                }
+                if (instances[instanceKey]) {
+                    instances[instanceKey].destroy();
+                }
+                
+                instances[instanceKey] = new Chart(ctx, {
+                    type: type, data: data,
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: legendDisplay, position: 'bottom', labels: { color: '#ccc', font: {family: 'Inter'} } } },
+                        scales: (type === 'line' || type === 'bar') ? { y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#ccc' }, grid: { display: false } } } : {}
+                    }
+                });
+            } catch(error) {
+                console.error(`Erro ao renderizar o gráfico #${canvasId}:`, error);
+            }
+        }
+        
+        function renderRankingCorretores(rankingData, columnFound) {
+            const rankingList = document.getElementById('ranking-corretores');
+            rankingList.innerHTML = ''; 
+            if (!columnFound) { rankingList.innerHTML = '<li class="list-group-item text-danger">Coluna "Corretores" não encontrada.</li>'; return; }
+            if (rankingData.length === 0) { rankingList.innerHTML = '<li class="list-group-item text-muted">Nenhum corretor no período.</li>'; return; }
+            
+            const icons = ['<i class="fa-solid fa-trophy fa-fw" style="color: #FFD700;"></i>', '<i class="fa-solid fa-trophy fa-fw" style="color: #C0C0C0;"></i>', '<i class="fa-solid fa-trophy fa-fw" style="color: #CD7F32;"></i>'];
+            rankingData.forEach((corretor, index) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `<div class="d-flex align-items-center">${icons[index] || '<i class="fa-solid fa-medal fa-fw" style="color: #a0a0a0;"></i>'}<span class="ms-2">${corretor.nome}</span></div><span class="badge rounded-pill" style="background-color: var(--cor-primaria);">${corretor.total}</span>`;
+                rankingList.appendChild(li);
+            });
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
-            if (GOOGLE_SHEET_URL === '' || GOOGLE_SHEET_URL.trim() === '') {
-                // Em vez de alert, mostra um erro mais visual
-                console.error("URL da planilha não configurada.");
-                document.querySelector('.last-update').textContent = 'Erro de configuração.';
-                document.getElementById('kpi-total-agendamentos').innerHTML = `<span style="font-size: 1rem; color: #E74C3C;">Configure a URL</span>`;
-                document.getElementById('kpi-agendamentos-realizados').innerHTML = ``;
-                document.getElementById('kpi-taxa-sucesso').innerHTML = ``;
-                document.getElementById('kpi-equipe-destaque').innerHTML = ``;
-                return;
-            }
-            
-            fetchDataAndRender(); // Carrega os dados na primeira vez
-            
-            // Define o intervalo para atualização automática (a cada 5 minutos = 300.000 ms)
+            fetchDataAndRender();
+            setupFilters();
             setInterval(fetchDataAndRender, 100000); 
         });
     </script>
