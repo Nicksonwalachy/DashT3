@@ -63,6 +63,11 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .kpi-logo {
+            max-height: 45px;
+            width: auto;
+            max-width: 100%;
+        }
         #ranking-corretores .list-group-item {
             background-color: transparent;
             color: var(--cor-texto);
@@ -132,6 +137,17 @@
 
     <script>
         const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTiFEUzgNtnuVpX2j4w22_VKpUOZ-gXNrDEASF-UYgox3b1gyhw-MB_d_SLf4qJj8A_PwdnowNpOkbo/pub?output=csv';
+
+        //logos
+        const teamLogos = {
+            "PRIME": "images/PRIME.jpeg",
+            "COMANDO DELTA": "images/COMANDO%20DELTA.jpeg", // O código já trata os espaços no nome
+            "ARCANJOS": "images/ARCANJOS.jpeg",
+            "ELITE": "images/ELITE.jpeg",
+            "BRAVO": "images/BRAVO.jpeg",
+            "WALLSTREET": "images/WALLSTREET.jpeg",
+            // add mais equipes
+        };
 
         let allData = [];
         let instances = {}; 
@@ -213,7 +229,7 @@
                 if (data.length === 0) {
                     document.getElementById('kpi-equipe-destaque').textContent = 'N/A';
                     document.getElementById('kpi-corretor-destaque').textContent = 'N/A';
-                    renderChart('equipes', 'graficoEquipes', 'bar', { labels: [], datasets: [] }, false);
+                    renderChart('equipes', 'graficoEquipes', 'bar', { labels: [], datasets: [] }, false, true);
                     renderChart('tipos', 'graficoTipos', 'doughnut', { labels: [], datasets: [] });
                     renderRankingCorretores([], !!corretorKey);
                     return;
@@ -236,8 +252,15 @@
                 const equipeDestaque = Object.keys(agendamentosPorEquipeRealizados).reduce((a, b) => agendamentosPorEquipeRealizados[a] > agendamentosPorEquipeRealizados[b] ? a : b, 'N/A');
                 const corretorDestaque = Object.keys(agendamentosPorCorretor).reduce((a, b) => agendamentosPorCorretor[a] > agendamentosPorCorretor[b] ? a : b, 'N/A');
 
-                document.getElementById('kpi-equipe-destaque').textContent = equipeDestaque;
-                document.getElementById('kpi-corretor-destaque').innerHTML = corretorKey ? corretorDestaque : '<span class="kpi-value-error">Erro</span>';
+                const equipeDestaqueElement = document.getElementById('kpi-equipe-destaque');
+                const nomeEquipeDestaque = equipeDestaque.trim();
+                if (nomeEquipeDestaque !== 'N/A' && teamLogos[nomeEquipeDestaque]) {
+                    equipeDestaqueElement.innerHTML = `<img src="${teamLogos[nomeEquipeDestaque]}" alt="${nomeEquipeDestaque}" class="kpi-logo">`;
+                } else {
+                    equipeDestaqueElement.textContent = nomeEquipeDestaque;
+                }
+                
+                document.getElementById('kpi-corretor-destaque').textContent = corretorDestaque;
 
                 const rankingCorretores = Object.entries(agendamentosPorCorretor).map(([nome, total]) => ({ nome, total })).sort((a, b) => b.total - a.total).slice(0, 5);
                 
@@ -248,10 +271,10 @@
                         data: Object.values(agendamentosPorEquipe), 
                         backgroundColor: 'rgba(46, 204, 113, 0.6)',
                         borderColor: 'rgba(46, 204, 113, 1)',
-                        borderWidth: 1,
-                        borderRadius: 5
+                        borderWidth: 1
                     }] 
-                }, false);
+                }, false, true);
+
                 renderChart('tipos', 'graficoTipos', 'doughnut', { labels: Object.keys(tiposDeAgendamentoRealizados), datasets: [{ data: Object.values(tiposDeAgendamentoRealizados), backgroundColor: ['#2ECC71', '#FFFFFF', '#27AE60', '#A9DFBF', '#1ABC9C'], borderColor: 'var(--cor-card)', borderWidth: 4 }] });
                 renderRankingCorretores(rankingCorretores, !!corretorKey);
             } catch (error) {
@@ -272,23 +295,30 @@
             });
         }
         
-        function renderChart(instanceKey, canvasId, type, data, legendDisplay = true) {
+        function renderChart(instanceKey, canvasId, type, data, legendDisplay = true, horizontal = false) {
             try {
                 const ctx = document.getElementById(canvasId)?.getContext('2d');
-                if (!ctx) {
-                    console.error(`Canvas com id "${canvasId}" não foi encontrado.`);
-                    return;
-                }
-                if (instances[instanceKey]) {
-                    instances[instanceKey].destroy();
-                }
+                if (!ctx) return;
+                if (instances[instanceKey]) instances[instanceKey].destroy();
                 
                 instances[instanceKey] = new Chart(ctx, {
-                    type: type, data: data,
+                    type: type, 
+                    data: data,
                     options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { display: legendDisplay, position: 'bottom', labels: { color: '#ccc', font: {family: 'Inter'} } } },
-                        scales: (type === 'line' || type === 'bar') ? { y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: '#ccc' }, grid: { display: false } } } : {}
+                        indexAxis: horizontal ? 'y' : 'x',
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { 
+                                display: legendDisplay, 
+                                position: 'bottom', 
+                                labels: { color: '#ccc', font: {family: 'Inter'} } 
+                            } 
+                        },
+                        scales: (type === 'bar') ? { 
+                            y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }, 
+                            x: { ticks: { color: '#ccc' }, grid: { display: false } } 
+                        } : {}
                     }
                 });
             } catch(error) {
@@ -314,7 +344,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchDataAndRender();
             setupFilters();
-            setInterval(fetchDataAndRender, 100000); 
+            setInterval(fetchDataAndRender, 300000); 
         });
     </script>
 </body>
