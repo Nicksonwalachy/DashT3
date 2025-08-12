@@ -249,7 +249,7 @@
                 const agendamentosPorCorretor = corretorKey ? data.reduce(safeReduce(corretorKey), {}) : {};
                 const tiposDeAgendamentoRealizados = data.filter(r => r.Status?.trim() === 'Realizado').reduce(safeReduce('TipoAgendamento'), {});
                 
-                const equipeDestaque = Object.keys(agendamentosPorEquipeRealizados).reduce((a, b) => agendamentosPorEquipeRealizados[a] > agendamentosPorEquipeRealizados[b] ? a : b, 'N/A');
+                const equipeDestaque = Object.keys(agendamentosPorEquipe).reduce((a, b) => agendamentosPorEquipe[a] > agendamentosPorEquipe[b] ? a : b, 'N/A');
                 const corretorDestaque = Object.keys(agendamentosPorCorretor).reduce((a, b) => agendamentosPorCorretor[a] > agendamentosPorCorretor[b] ? a : b, 'N/A');
 
                 const equipeDestaqueElement = document.getElementById('kpi-equipe-destaque');
