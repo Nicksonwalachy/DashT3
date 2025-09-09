@@ -141,12 +141,11 @@
         //logos
         const teamLogos = {
             "PRIME": "images/PRIME.jpeg",
-            "COMANDO DELTA": "images/COMANDO%20DELTA.jpeg", // O código já trata os espaços no nome
+            "COMANDO DELTA": "images/COMANDO%20DELTA.jpeg",
             "ARCANJOS": "images/ARCANJOS.jpeg",
             "ELITE": "images/ELITE.jpeg",
             "BRAVO": "images/BRAVO.jpeg",
             "WALLSTREET": "images/WALLSTREET.jpeg",
-            // add mais equipes
         };
 
         let allData = [];
@@ -170,13 +169,27 @@
                 Papa.parse(GOOGLE_SHEET_URL, {
                     download: true, header: true, skipEmptyLines: true,
                     complete: function(results) {
-                        allData = results.data;
+                        const rawData = results.data;
+                        if (!rawData || rawData.length === 0 || !Object.keys(rawData[0]).length) {
+                             console.error("Nenhum dado válido foi carregado da planilha.");
+                             document.querySelector('.last-update').textContent = 'Planilha vazia ou com erro.';
+                             return;
+                        }
+                        
+                        // *** IMPLEMENTAÇÃO DA CORREÇÃO ***
+                        // Filtra as linhas "fantasma" que a planilha pode enviar.
+                        // Uma linha só é válida se tiver algum valor na primeira coluna (a da data).
+                        const dateKey = Object.keys(rawData[0])[0];
+                        allData = rawData.filter(row => row[dateKey] && row[dateKey].trim() !== '');
+                        
                         if (!allData || allData.length === 0) {
-                            console.error("Nenhum dado válido foi carregado da planilha.");
+                            console.error("Dados filtrados resultaram em uma lista vazia.");
+                            document.querySelector('.last-update').textContent = 'Nenhum registro encontrado.';
+                            // Limpa a tela se não houver dados válidos
+                            updateDashboard('todos'); 
                             return;
                         }
                         
-                        const dateKey = Object.keys(allData[0])[0];
                         allData.forEach(row => { row.dayType = getDayType(row[dateKey]); });
                         
                         renderStaticCharts(allData);
@@ -204,7 +217,7 @@
         }
 
         function updateDashboard(filter) {
-            const filteredData = (filter === 'todos')
+            const filteredData = (filter === 'todos' || allData.length === 0)
                 ? allData 
                 : allData.filter(row => row.dayType === filter);
 
