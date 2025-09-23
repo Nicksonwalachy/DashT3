@@ -146,6 +146,7 @@
             "ELITE": "images/ELITE.jpeg",
             "BRAVO": "images/BRAVO.jpeg",
             "WALLSTREET": "images/WALLSTREET.jpeg",
+            "ALPHA": "images/ALPHA.jpeg",
         };
 
         let allData = [];
@@ -227,7 +228,7 @@
         
         function processAndRenderKPIs(data) {
             const totalAgendamentos = data.length;
-            const agendamentosRealizados = data.filter(row => row.Status && typeof row.Status === 'string' && row.Status.trim() === 'Realizado').length;
+            const agendamentosRealizados = data.filter(row => row.Status && typeof row.Status === 'string' && row.Status.trim() === 'REALIZADO').length;
             const taxaSucesso = totalAgendamentos > 0 ? ((agendamentosRealizados / totalAgendamentos) * 100).toFixed(1) + '%' : '0%';
             
             document.getElementById('kpi-total-agendamentos').textContent = totalAgendamentos;
